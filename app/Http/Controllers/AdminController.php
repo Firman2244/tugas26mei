@@ -7,6 +7,7 @@ use App\Models\payments;
 use App\Models\User;
 use App\Models\Fields;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -35,11 +36,6 @@ class AdminController extends Controller
             'pesananTerbaru'
         ));
     }
-
-
-
-
-
 
     public function orders(Request $request)
     {
@@ -124,7 +120,7 @@ class AdminController extends Controller
         ]);
 
         // Simpan Payment
-        Payments::create([
+        payments::create([
             'booking_id' => $booking->id,
             'metode_bayar' => $request->metode_bayar,
             'jumlah_bayar' => $total_harga,
@@ -134,8 +130,7 @@ class AdminController extends Controller
         return back()->with('success', 'Pesanan manual untuk ' . $request->nama_pelanggan . ' berhasil disimpan!');
     }
 
-
-    public function updateOrder(Request $request, $id)
+    public function updateOrder(Request $request, string $id)
     {
         $request->validate([
             'status' => 'required|in:pending,confirmed,cancelled',
@@ -159,15 +154,13 @@ class AdminController extends Controller
         return back()->with('success', 'Status pesanan #' . $id . ' berhasil diperbarui!');
     }
 
-    public function deleteOrder($id)
+    public function deleteOrder(string $id)
     {
         $booking = \App\Models\Booking::findOrFail($id);
         $booking->delete(); // Karena pakai onDelete('cascade'), payment terkait otomatis terhapus
 
         return back()->with('success', 'Pesanan berhasil dihapus dari sistem.');
     }
-
-
 
     // Menampilkan halaman daftar lapangan
     public function fields()
@@ -197,7 +190,7 @@ class AdminController extends Controller
         return back()->with('success', 'Lapangan berhasil ditambahkan!');
     }
 
-    public function updateField(Request $request, $id)
+    public function updateField(Request $request, string $id)
     {
         $request->validate([
             'nama_lapangan' => 'required|string|max:255',
@@ -223,7 +216,7 @@ class AdminController extends Controller
     }
 
     // Menghapus lapangan
-    public function deleteField($id)
+    public function deleteField(string $id)
     {
         $field = Fields::findOrFail($id);
         if ($field->image_url) {
@@ -235,13 +228,15 @@ class AdminController extends Controller
 
     public function profile()
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         return view('admin.profile', compact('user'));
     }
 
     public function updateProfile(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',

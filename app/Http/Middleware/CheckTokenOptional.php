@@ -21,10 +21,11 @@ class CheckTokenOptional
         $request->headers->set('Authorization', 'Bearer ' . $token);
         
         try {
-            // Coba login-kan user ke sistem secara silent
-            auth()->guard('api')->authenticate();
+            // Coba ambil user dari guard secara silent (tidak melempar jika tidak tersedia)
+            // menggunakan user() yang aman dibandingkan authenticate() yang mungkin tidak ada
+            auth()->guard('api')->user();
         } catch (\Exception $e) {
-            // Jika token kadaluwarsa, biarkan saja sebagai guest
+            // Jika terjadi kesalahan (mis. token kadaluwarsa), biarkan saja sebagai guest
         }
     }
 
