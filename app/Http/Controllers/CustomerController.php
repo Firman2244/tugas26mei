@@ -6,6 +6,7 @@ use App\Models\Fields;
 use App\Models\Booking;
 use App\Models\payments;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -29,9 +30,7 @@ class CustomerController extends Controller
         return view('customer.dashboard', compact('orders', 'stats'));
     }
 
-
-
-    public function bookingPage($id)
+    public function bookingPage(string $id)
     {
         $field = Fields::findOrFail($id);
 
@@ -132,13 +131,15 @@ class CustomerController extends Controller
 
     public function profile()
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         return view('customer.profile', compact('user'));
     }
 
     public function updateProfile(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         $request->validate([
             'name' => 'required|string|max:255',
