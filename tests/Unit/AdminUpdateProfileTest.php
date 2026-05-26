@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Mockery;
 
-class AdminProfileTest extends TestCase
+class AdminUpdateProfileTest extends TestCase
 {
     public function test_update_profile_berhasil_menggunakan_mock_double()
     {
